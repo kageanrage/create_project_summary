@@ -3,6 +3,8 @@ from config import Config
 import bs4
 import pandas as pd
 from pprint import pprint
+import datetime
+
 
 cfg = Config()
 
@@ -29,17 +31,17 @@ df = dfs[0]  # the first df in the list
 # print(df.info())
 # print(df.head())
 
-# TODO: identify which jobs are currently live
+# section: identify which jobs are currently live
 
 live_jobs_df = df[df.Published == True]
 # print(live_jobs_df.info())
 # print(live_jobs_df.head())
 
 
-# TODO: OPTIONAL - export df to excel
+# section: OPTIONAL - export df to excel
 # live_jobs_df.to_excel('export.xlsx')
 
-# TODO: convert live_jobs_df to a dict of per-project dicts
+# section: convert live_jobs_df to a dict of per-project dicts
 jobs_list = live_jobs_df.values.tolist()
 # print('List of live jobs:')
 # print(jobs_list)
@@ -58,8 +60,8 @@ for i in range(0, len(jobs_list)):
 # print('Live jobs dict before adding survey_id')
 # pprint(live_jobs)
 
-# TODO: isolate the survey id for each of those, to determine download URL
-# TODO: first, use a simplified version of the regex from admin_scrape.py to grab survey_id and survey_name
+# section: isolate the survey id for each of those, to determine download URL
+# section: first, use a simplified version of the regex from admin_scrape.py to grab survey_id and survey_name
 with open(soup_filename) as f:
     canned_soup = bs4.BeautifulSoup(f, "html.parser")
 
@@ -78,7 +80,7 @@ for i in range(0, len(mo)):
 # print('All projects dict:')
 # pprint(all_projects)
 
-# TODO: add survey_id to dict of dicts
+# section: add survey_id to dict of dicts
 for k in live_jobs.keys():
     try:
         live_jobs[k].setdefault('survey_id', all_projects[k]['survey_id'])
@@ -86,23 +88,33 @@ for k in live_jobs.keys():
         print(f"all_projects['{k}'] not found")
         exit()
 
-# pprint(live_jobs)
+pprint(live_jobs)
 
 
-# TODO: INCOMPLETE: create dir structure (todays date = root dir)
-# testing phase root dir
-root_dir = 'C:\WorkingDir\project_updates'
-date_dir_name_template = "YYYY-MM-DD Tue"
+# section: create (root) dir for todays date
+root_dir = 'C:\WorkingDir\project_updates'  # testing phase root dir
 
+todays_date = str(datetime.datetime.today())[0:10].replace('-', '')
+today = str(datetime.datetime.today().strftime("%A %d. %B %Y"))[0:3]
+date_dir_name = f"{todays_date} {today}"
+se_general.create_dir_if_not_exists(f"{root_dir}\\{date_dir_name}")
 
-# TODO: INCOMPLETE: download current results for each project and move them to relevant dir
-for v in live_jobs.values():
-    print(v['survey_id'])
+# section: create dir for each project
+for k in live_jobs.keys():
+    p_number = live_jobs[k]['p_number']
+    client_name = live_jobs[k]['client_name']
+    survey_name = live_jobs[k]['survey_name']
+    project_dir_name = f"{p_number} {se_general.get_shortened_str(client_name, 5)} {se_general.get_shortened_str(survey_name, 5)}"
+    se_general.create_dir_if_not_exists(f"{root_dir}\\{date_dir_name}\\{project_dir_name}")
 
-# TODO: INCOMPLETE: clone and rename xlsx files from template
+# TODO: download current results for each project and move them to relevant dir
+# for v in live_jobs.values():
+#     print(v['survey_id'])
+
+# TODO: clone and rename xlsx files from template
 fname_template = 'Summary p_num survey_name.xlsx'
-# TODO: INCOMPLETE: move downloaded current results files to subdirs
+# TODO: move downloaded current results files to subdirs
 # produce a list of csv files in the downloads dir
 # find each one using p_number, then move it to the right dir
-# TODO: INCOMPLETE: open all files
-# TODO: INCOMPLETE: refresh data on each file (if possible)
+# TODO: open all files
+# TODO: refresh data on each file (if possible)
