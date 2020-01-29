@@ -88,7 +88,7 @@ for k in live_jobs.keys():
         print(f"all_projects['{k}'] not found")
         exit()
 
-pprint(live_jobs)
+# pprint(live_jobs)
 
 
 # section: create (root) dir for todays date
@@ -99,17 +99,44 @@ today = str(datetime.datetime.today().strftime("%A %d. %B %Y"))[0:3]
 date_dir_name = f"{todays_date} {today}"
 se_general.create_dir_if_not_exists(f"{root_dir}\\{date_dir_name}")
 
-# section: create dir for each project
-for k in live_jobs.keys():
+# section: create dir and SP_files subdir for each project
+
+
+
+# section: to use during construction phase only, create one-project dict
+short_dict = {}
+short_dict['Soft Drink BGS Tracker Jan-20'] = live_jobs['Soft Drink BGS Tracker Jan-20']
+pprint(short_dict)
+
+
+# TODO: create a loop which sequentially does each remaining task to completion, project by project
+# TODO: when finished testing, use live_jobs dict for this instead of short_dict
+
+for k in short_dict.keys():
+    print(f"Running through loop for short_dict['{k}']")
+
     p_number = live_jobs[k]['p_number']
     client_name = live_jobs[k]['client_name']
     survey_name = live_jobs[k]['survey_name']
+    survey_id = live_jobs[k]['survey_id']
+
+    # create directories
     project_dir_name = f"{p_number} {se_general.get_shortened_str(client_name, 5)} {se_general.get_shortened_str(survey_name, 5)}"
     se_general.create_dir_if_not_exists(f"{root_dir}\\{date_dir_name}\\{project_dir_name}")
+    se_general.create_dir_if_not_exists(
+        f"{root_dir}\\{date_dir_name}\\{project_dir_name.rstrip()}\\SP_files")  # rstrip in case proj_dir_name ends in a space
 
-# TODO: download current results for each project and move them to relevant dir
-# for v in live_jobs.values():
-#     print(v['survey_id'])
+    # TODO: download current results for each project
+    dl_link = f"{cfg.download_link_example}{survey_id}"
+    # print(dl_link)
+    # driver.get(dl_link)  # commented out during test mode
+
+# TODO: iterate through downloads dir contents to find the downloaded results csv for each job
+    most_recent_csv = se_general.identify_cur_res_csv(p_number, cfg.downloads_dir)
+    print('most recent csv is:')
+    print(most_recent_csv)
+
+# TODO: move downloaded results to appropriate dir
 
 # TODO: clone and rename xlsx files from template
 fname_template = 'Summary p_num survey_name.xlsx'
