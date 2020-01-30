@@ -1,31 +1,30 @@
 import se_admin, se_general
 from config import Config
-import bs4, os
+import bs4, os, subprocess, datetime, shutil, time
 import pandas as pd
 from pprint import pprint
-import datetime
-import shutil
 
 
 cfg = Config()
 
-# TODO: scrape survey admin page
-
 # section: scrapes the latest survey admin table
-'''
+
 driver, wait = se_general.init_selenium()
+
+# '''
 
 se_admin.login_sa(driver, cfg.survey_admin_URL)
 
 soup = se_general.grab_new_soup(driver)
 
-'''
+# '''
 
 soup_filename = '20200128_soup.txt'
 
-# se_general.export_soup(soup, soup_filename)
+se_general.export_soup(soup, soup_filename)
 
 dfs = pd.read_html(soup_filename)  # list of dataframes
+# dfs = pd.read_html(soup)  # list of dataframes
 
 df = dfs[0]  # the first df in the list
 
@@ -92,28 +91,25 @@ for k in live_jobs.keys():
 # pprint(live_jobs)
 
 
-# section: create (root) dir for todays date
-root_dir = 'C:\WorkingDir\project_updates'  # testing phase root dir
-
+# section: create dir for todays date
+root_dir = cfg.project_updates_root_dir
 todays_date = str(datetime.datetime.today())[0:10].replace('-', '')
 today = str(datetime.datetime.today().strftime("%A %d. %B %Y"))[0:3]
 date_dir_name = f"{todays_date} {today}"
 se_general.create_dir_if_not_exists(f"{root_dir}\\{date_dir_name}")
 
-# section: create dir and SP_files subdir for each project
-
-
-
 # section: to use during construction phase only, create one-project dict
+"""
 short_dict = {}
-short_dict['Soft Drink BGS Tracker Jan-20'] = live_jobs['Soft Drink BGS Tracker Jan-20']
+short_dict['Oresome Resources Website Redevelopment'] = live_jobs['Oresome Resources Website Redevelopment']
+short_dict['Reachout Year 9 to 12s'] = live_jobs['Reachout Year 9 to 12s']
 pprint(short_dict)
-
+"""
 
 # TODO: create a loop which sequentially does each remaining task to completion, project by project
 # TODO: when finished testing, use live_jobs dict for this instead of short_dict
 
-for k in short_dict.keys():
+for k in live_jobs.keys():
     print(f"Running through loop for short_dict['{k}']")
 
     # grab key variables from dict
@@ -130,11 +126,12 @@ for k in short_dict.keys():
     se_general.create_dir_if_not_exists(project_subdir_full)
 
     # TODO: download current results for each project
-    dl_link = f"{cfg.download_link_example}{survey_id}"
-    # print(dl_link)
-    # driver.get(dl_link)  # commented out during test mode
+    dl_link = f"{cfg.current_results_dl_url_prefix}{survey_id}"
+    print(dl_link)
+    driver.get(dl_link)  # commented out during test mode
 
 # section: iterate through downloads dir contents to find the downloaded results csv for each job
+    time.sleep(2)
     most_recent_csv = se_general.identify_cur_res_csv(p_number, cfg.downloads_dir)
     print('most recent csv is:')
     print(most_recent_csv)
@@ -152,5 +149,7 @@ for k in short_dict.keys():
     print(f'attempting to copy {cfg.xls_template_full} to {xls_final_filename_full}\\')
     shutil.copy(cfg.xls_template_full, xls_final_filename_full)
 
-# TODO: open all files
+# section: open all files
+    subprocess.Popen(f'explorer "{xls_final_filename_full}"')
+
 # TODO: refresh data on each file (if possible)
