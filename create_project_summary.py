@@ -1,6 +1,6 @@
 import se_admin, se_general
 from config import Config
-import bs4
+import bs4, os
 import pandas as pd
 from pprint import pprint
 import datetime
@@ -123,10 +123,10 @@ for k in short_dict.keys():
     survey_id = live_jobs[k]['survey_id']
 
     # create directories
-    project_dir_name = f"{p_number} {se_general.get_shortened_str(client_name, 5)} {se_general.get_shortened_str(survey_name, 5)}"
+    project_dir_name = f"{p_number} {se_general.get_shortened_str(client_name, 5)} {se_general.get_shortened_str(survey_name, 5)}".rstrip()
     project_dir_full = f"{root_dir}\\{date_dir_name}\\{project_dir_name}"
     se_general.create_dir_if_not_exists(project_dir_full)
-    project_subdir_full = (f"{root_dir}\\{date_dir_name}\\{project_dir_name.rstrip()}\\SP_files")  # rstrip in case proj_dir_name ends in a space
+    project_subdir_full = (f"{root_dir}\\{date_dir_name}\\{project_dir_name}\\SP_files")  # rstrip in case proj_dir_name ends in a space
     se_general.create_dir_if_not_exists(project_subdir_full)
 
     # TODO: download current results for each project
@@ -134,20 +134,23 @@ for k in short_dict.keys():
     # print(dl_link)
     # driver.get(dl_link)  # commented out during test mode
 
-# TODO: iterate through downloads dir contents to find the downloaded results csv for each job
+# section: iterate through downloads dir contents to find the downloaded results csv for each job
     most_recent_csv = se_general.identify_cur_res_csv(p_number, cfg.downloads_dir)
     print('most recent csv is:')
     print(most_recent_csv)
     most_recent_csv_full = f"{cfg.downloads_dir}\\{most_recent_csv}"
 
-# TODO: move downloaded results to appropriate dir
+# section: move downloaded results to appropriate dir, then rename
     shutil.move(most_recent_csv_full, project_subdir_full)  # untested
+    moved_csv_full = f"{project_subdir_full}\\{most_recent_csv}"
+    desired_csv_name_full = f"{project_subdir_full}\\SurveyResults.csv"
+    os.rename(moved_csv_full, desired_csv_name_full)
 
+# section: clone and rename xlsx files from template
+    fname_template = f'Summary {p_number} {se_general.get_shortened_str(survey_name, 10)}.xlsx'
+    xls_final_filename_full = f"{project_dir_full}\\{fname_template}"
+    print(f'attempting to copy {cfg.xls_template_full} to {xls_final_filename_full}\\')
+    shutil.copy(cfg.xls_template_full, xls_final_filename_full)
 
-# TODO: clone and rename xlsx files from template
-fname_template = 'Summary p_num survey_name.xlsx'
-# TODO: move downloaded current results files to subdirs
-# produce a list of csv files in the downloads dir
-# find each one using p_number, then move it to the right dir
 # TODO: open all files
 # TODO: refresh data on each file (if possible)
