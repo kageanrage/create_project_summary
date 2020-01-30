@@ -4,6 +4,7 @@ import bs4
 import pandas as pd
 from pprint import pprint
 import datetime
+import shutil
 
 
 cfg = Config()
@@ -115,6 +116,7 @@ pprint(short_dict)
 for k in short_dict.keys():
     print(f"Running through loop for short_dict['{k}']")
 
+    # grab key variables from dict
     p_number = live_jobs[k]['p_number']
     client_name = live_jobs[k]['client_name']
     survey_name = live_jobs[k]['survey_name']
@@ -122,9 +124,10 @@ for k in short_dict.keys():
 
     # create directories
     project_dir_name = f"{p_number} {se_general.get_shortened_str(client_name, 5)} {se_general.get_shortened_str(survey_name, 5)}"
-    se_general.create_dir_if_not_exists(f"{root_dir}\\{date_dir_name}\\{project_dir_name}")
-    se_general.create_dir_if_not_exists(
-        f"{root_dir}\\{date_dir_name}\\{project_dir_name.rstrip()}\\SP_files")  # rstrip in case proj_dir_name ends in a space
+    project_dir_full = f"{root_dir}\\{date_dir_name}\\{project_dir_name}"
+    se_general.create_dir_if_not_exists(project_dir_full)
+    project_subdir_full = (f"{root_dir}\\{date_dir_name}\\{project_dir_name.rstrip()}\\SP_files")  # rstrip in case proj_dir_name ends in a space
+    se_general.create_dir_if_not_exists(project_subdir_full)
 
     # TODO: download current results for each project
     dl_link = f"{cfg.download_link_example}{survey_id}"
@@ -135,8 +138,11 @@ for k in short_dict.keys():
     most_recent_csv = se_general.identify_cur_res_csv(p_number, cfg.downloads_dir)
     print('most recent csv is:')
     print(most_recent_csv)
+    most_recent_csv_full = f"{cfg.downloads_dir}\\{most_recent_csv}"
 
 # TODO: move downloaded results to appropriate dir
+    shutil.move(most_recent_csv_full, project_subdir_full)  # untested
+
 
 # TODO: clone and rename xlsx files from template
 fname_template = 'Summary p_num survey_name.xlsx'
