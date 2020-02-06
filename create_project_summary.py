@@ -7,6 +7,13 @@ from pprint import pprint
 
 cfg = Config()
 
+# TODO: improve this temporary mechanism so I can manually select projects
+# section - KEY SWITCH IS HERE - a crude temporary way of saying whether we  want to just run this using the jobs
+#  listed in short_dict below
+# manually_select_projects = True  # toggled off
+manually_select_projects = False
+
+
 # section: scrapes the latest survey admin table
 
 driver, wait = se_general.init_selenium()
@@ -99,18 +106,26 @@ date_dir_name = f"{todays_date} {today}"
 se_general.create_dir_if_not_exists(f"{root_dir}\\{date_dir_name}")
 
 # section: to use during construction phase only, create one-project dict
-"""
-short_dict = {}
-short_dict['Oresome Resources Website Redevelopment'] = live_jobs['Oresome Resources Website Redevelopment']
-short_dict['Reachout Year 9 to 12s'] = live_jobs['Reachout Year 9 to 12s']
-pprint(short_dict)
-"""
+
+# TODO: improve this temporary mechanism so I can manually select projects. Note this doesn't work at the moment as I'm
+#  trying to pull the manual project from the live projects list, where it doesn't exist. Def solveable but not in
+#  5 minutes
+if manually_select_projects:
+    short_dict = {}
+    short_dict['Project Acne MDF Dip 2018'] = live_jobs['Project Acne MDF Dip 2018']
+    # short_dict['Reachout Year 9 to 12s'] = live_jobs['Reachout Year 9 to 12s']
+    pprint(short_dict)
+
+
+if manually_select_projects:
+    live_jobs = short_dict
 
 # TODO: create a loop which sequentially does each remaining task to completion, project by project
 # TODO: when finished testing, use live_jobs dict for this instead of short_dict
 
+
 for k in live_jobs.keys():
-    print(f"Running through loop for short_dict['{k}']")
+    print(f"Running through loop for live_jobs['{k}']")
 
     # grab key variables from dict
     p_number = live_jobs[k]['p_number']
