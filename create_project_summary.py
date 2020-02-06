@@ -144,7 +144,7 @@ se_general.create_dir_if_not_exists(f"{root_dir}\\{date_dir_name}")
 # section: create short one-or-more job dict for manual operation (as opposed to all live jobs)
 if manually_select_projects:
     short_dict = {}
-    short_dict['Project Acne MDF Dip 2018'] = all_jobs['Project Acne MDF Dip 2018']
+    short_dict[cfg.manual_test_survey_name] = all_jobs[cfg.manual_test_survey_name]
     # short_dict['Reachout Year 9 to 12s'] = live_jobs['Reachout Year 9 to 12s']
     pprint(short_dict)
     jobs_of_interest = short_dict
@@ -156,13 +156,13 @@ else:
 #  Same for Education and Member FB surveys
 
 for k in jobs_of_interest.keys():
-    print(f"Running through loop for live_jobs['{k}']")
+    print(f"Running through loop for jobs_of_interest['{k}']")
 
     # grab key variables from dict
-    p_number = live_jobs[k]['p_number']
-    client_name = live_jobs[k]['client_name']
-    survey_name = live_jobs[k]['survey_name']
-    survey_id = live_jobs[k]['survey_id']
+    p_number = jobs_of_interest[k]['p_number']
+    client_name = jobs_of_interest[k]['client_name']
+    survey_name = jobs_of_interest[k]['survey_name']
+    survey_id = jobs_of_interest[k]['survey_id']
 
     # create directories
     project_dir_name = f"{p_number} {se_general.get_shortened_str(client_name, 5)} {se_general.get_shortened_str(survey_name, 5)}".rstrip()
@@ -198,4 +198,8 @@ for k in jobs_of_interest.keys():
 # section: open all files
     subprocess.Popen(f'explorer "{xls_final_filename_full}"')
 
+# TODO: edit xls template so that duplicate detection is performed (via IP address and layering other variables)
+
 # TODO: refresh data on each file (if possible)
+
+# TODO: if refreshed, then merge all 'dashboard/RT' tabs into one xls (noting that I won't be able to refresh after that)
