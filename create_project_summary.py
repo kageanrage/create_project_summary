@@ -8,10 +8,11 @@ from pprint import pprint
 cfg = Config()
 
 # TODO: improve this temporary mechanism so I can manually select projects
-# section - KEY SWITCH IS HERE - a crude temporary way of saying whether we  want to just run this using the jobs
+# TODO: when run normally, pop up GUI to choose 'all live projects', or to be able to input names of certain one/s
+# section - KEY SWITCH IS HERE - a crude temporary way of saying whether we want to just run this using the jobs
 #  listed in short_dict below
-# manually_select_projects = True  # toggled off
-manually_select_projects = False
+manually_select_projects = True  # toggle
+# manually_select_projects = False  # toggle
 
 
 # section: scrapes the latest survey admin table
@@ -33,39 +34,62 @@ se_general.export_soup(soup, soup_filename)
 dfs = pd.read_html(soup_filename)  # list of dataframes
 # dfs = pd.read_html(soup)  # list of dataframes
 
-df = dfs[0]  # the first df in the list
+all_sa_jobs_df = dfs[0]  # the first df in the list
 
 # print(df.info())
 # print(df.head())
 
 # section: identify which jobs are currently live
 
-live_jobs_df = df[df.Published == True]
+live_sa_jobs_df = all_sa_jobs_df[all_sa_jobs_df.Published == True]
 # print(live_jobs_df.info())
 # print(live_jobs_df.head())
-
 
 # section: OPTIONAL - export df to excel
 # live_jobs_df.to_excel('export.xlsx')
 
+# TODO: NB there is a LOT of duplicate code ahead, doing the same stuff for live_jobs as for all_jobs.
+#  Re-write, perhaps building 'Live?' variable into all_jobs and then trimming it for use if/when needed
 # section: convert live_jobs_df to a dict of per-project dicts
-jobs_list = live_jobs_df.values.tolist()
+live_sa_jobs_list = live_sa_jobs_df.values.tolist()
 # print('List of live jobs:')
-# print(jobs_list)
+# print(live_sa_jobs_list)
 
 # print('First live job:')
-# print(jobs_list[0])
+# print(live_sa_jobs_list[0])
 
 live_jobs = {}
-for i in range(0, len(jobs_list)):
+for i in range(0, len(live_sa_jobs_list)):
     live_job = {}
-    live_job['survey_name'] = jobs_list[i][0]
-    live_job['p_number'] = jobs_list[i][2]
-    live_job['client_name'] = jobs_list[i][3]
-    live_jobs[jobs_list[i][0]] = live_job
+    live_job['survey_name'] = live_sa_jobs_list[i][0]
+    live_job['p_number'] = live_sa_jobs_list[i][2]
+    live_job['client_name'] = live_sa_jobs_list[i][3]
+    live_jobs[live_sa_jobs_list[i][0]] = live_job
 
 # print('Live jobs dict before adding survey_id')
 # pprint(live_jobs)
+
+# section: in parallel, convert all_sa_jobs_df to a dict of per-project dicts
+
+all_sa_jobs_list = all_sa_jobs_df.values.tolist()
+# print('List of all jobs:')
+# print(all_sa_jobs_list)
+
+# print('First of 'all' jobs:')
+# print(all_sa_jobs_list[0])
+
+
+all_jobs = {}
+for i in range(0, len(all_sa_jobs_list)):
+    job = {}
+    job['survey_name'] = all_sa_jobs_list[i][0]
+    job['p_number'] = all_sa_jobs_list[i][2]
+    job['client_name'] = all_sa_jobs_list[i][3]
+    all_jobs[all_sa_jobs_list[i][0]] = job
+
+# print('All jobs dict before adding survey_id')
+# pprint(all_jobs)
+
 
 # section: isolate the survey id for each of those, to determine download URL
 # section: first, use a simplified version of the regex from admin_scrape.py to grab survey_id and survey_name
@@ -77,26 +101,37 @@ mo = cfg.brief_regex.findall(canned_soup_string)
 # print(mo[0])
 
 # convert all_projects mo into a dict with p_numbers as keys
-all_projects = {}
+all_jobs_ids_and_names = {}
 for i in range(0, len(mo)):
     per_project_dict = {}
     per_project_dict['survey_id'] = mo[i][0]
     per_project_dict['survey_name'] = mo[i][1]
-    all_projects[mo[i][1]] = per_project_dict
+    all_jobs_ids_and_names[mo[i][1]] = per_project_dict
 
 # print('All projects dict:')
 # pprint(all_projects)
 
-# section: add survey_id to dict of dicts
+# section: add survey_id to dict of dicts (Live jobs only)
 for k in live_jobs.keys():
     try:
-        live_jobs[k].setdefault('survey_id', all_projects[k]['survey_id'])
+        live_jobs[k].setdefault('survey_id', all_jobs_ids_and_names[k]['survey_id'])
     except KeyError:
         print(f"all_projects['{k}'] not found")
         exit()
+print(f'\n\nlive_jobs is of length {len(live_jobs)} and looks like this:')
+pprint(live_jobs)
 
-# pprint(live_jobs)
+# section: IN PARALLEL - add survey_id to dict of dicts (all jobs)
+for k in all_jobs.keys():
+    try:
+        all_jobs[k].setdefault('survey_id', all_jobs_ids_and_names[k]['survey_id'])
+    except KeyError:
+        print(f"all_jobs_ids_and_names['{k}'] not found")
+        # TODO: establish why many are not found, then decide if I can accept this. To do with bogus chars like '&'?
+        # exit()
 
+print(f'\n\nall_jobs is of length {len(all_jobs)} and looks like this:')
+pprint(all_jobs)
 
 # section: create dir for todays date
 root_dir = cfg.project_updates_root_dir
@@ -105,26 +140,22 @@ today = str(datetime.datetime.today().strftime("%A %d. %B %Y"))[0:3]
 date_dir_name = f"{todays_date} {today}"
 se_general.create_dir_if_not_exists(f"{root_dir}\\{date_dir_name}")
 
-# section: to use during construction phase only, create one-project dict
-
-# TODO: improve this temporary mechanism so I can manually select projects. Note this doesn't work at the moment as I'm
-#  trying to pull the manual project from the live projects list, where it doesn't exist. Def solveable but not in
-#  5 minutes
+# TODO: improve this clumsy mechanism including passing in manual jobs of interest
+# section: create short one-or-more job dict for manual operation (as opposed to all live jobs)
 if manually_select_projects:
     short_dict = {}
-    short_dict['Project Acne MDF Dip 2018'] = live_jobs['Project Acne MDF Dip 2018']
+    short_dict['Project Acne MDF Dip 2018'] = all_jobs['Project Acne MDF Dip 2018']
     # short_dict['Reachout Year 9 to 12s'] = live_jobs['Reachout Year 9 to 12s']
     pprint(short_dict)
+    jobs_of_interest = short_dict
+else:
+    jobs_of_interest = live_jobs
 
 
-if manually_select_projects:
-    live_jobs = short_dict
+# TODO: if show_welcome_survey = False, remove welcome survey from live_jobs before running main loop.
+#  Same for Education and Member FB surveys
 
-# TODO: create a loop which sequentially does each remaining task to completion, project by project
-# TODO: when finished testing, use live_jobs dict for this instead of short_dict
-
-
-for k in live_jobs.keys():
+for k in jobs_of_interest.keys():
     print(f"Running through loop for live_jobs['{k}']")
 
     # grab key variables from dict
@@ -140,7 +171,7 @@ for k in live_jobs.keys():
     project_subdir_full = (f"{root_dir}\\{date_dir_name}\\{project_dir_name}\\SP_files")  # rstrip in case proj_dir_name ends in a space
     se_general.create_dir_if_not_exists(project_subdir_full)
 
-    # TODO: download current results for each project
+    # Download current results for each project
     dl_link = f"{cfg.current_results_dl_url_prefix}{survey_id}"
     print(dl_link)
     driver.get(dl_link)  # commented out during test mode
