@@ -3,11 +3,12 @@ from config import Config
 import bs4, os, subprocess, datetime, shutil, time
 import pandas as pd
 from pprint import pprint
+import pyautogui
 
 
 cfg = Config()
 
-# TODO: improve this temporary mechanism so I can manually select projects
+# TODO: improve this temporary mechanism for manually selecting projects
 # TODO: when run normally, pop up GUI to choose 'all live projects', or to be able to input names of certain one/s
 # section - KEY SWITCH IS HERE - a crude temporary way of saying whether we want to just run this using the jobs
 #  listed in short_dict below
@@ -145,7 +146,7 @@ se_general.create_dir_if_not_exists(f"{root_dir}\\{date_dir_name}")
 if manually_select_projects:
     short_dict = {}
     short_dict[cfg.manual_test_survey_name] = all_jobs[cfg.manual_test_survey_name]
-    # short_dict['Reachout Year 9 to 12s'] = live_jobs['Reachout Year 9 to 12s']
+    short_dict[cfg.manual_test_survey_name_2] = all_jobs[cfg.manual_test_survey_name_2]
     pprint(short_dict)
     jobs_of_interest = short_dict
 else:
@@ -197,9 +198,17 @@ for k in jobs_of_interest.keys():
 
 # section: open all files
     subprocess.Popen(f'explorer "{xls_final_filename_full}"')
+    time.sleep(10)
+    # refresh
+    print('Pressing Ctrl-Alt-F5 to refresh')
+    pyautogui.keyDown('ctrl')  # hold down the ctrl key
+    pyautogui.keyDown('alt')  # hold down the ctrl key
+    pyautogui.press('f5')
+    pyautogui.keyUp('ctrl')  # hold down the ctrl key
+    pyautogui.keyUp('alt')  # hold down the ctrl key
 
-# TODO: edit xls template so that duplicate detection is performed (via IP address and layering other variables)
 
-# TODO: refresh data on each file (if possible)
+# TODO: figure out how to fully automatically refresh - it seems to be doing it for the second project in the
+#  test loop but not the first; Yet to try with a longer list e.g. all live jobs
 
-# TODO: if refreshed, then merge all 'dashboard/RT' tabs into one xls (noting that I won't be able to refresh after that)
+# TODO: then merge all 'dashboard/RT' tabs into one xls (noting that I won't be able to refresh after that)
