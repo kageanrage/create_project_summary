@@ -153,8 +153,32 @@ else:
     jobs_of_interest = live_jobs
 
 
-# TODO: if show_welcome_survey = False, remove welcome survey from live_jobs before running main loop.
+# section: if show_welcome_survey = False, remove welcome survey from live_jobs before running main loop.
 #  Same for Education and Member FB surveys
+
+show_welcome_survey = False
+show_education_screener = False
+show_member_survey = False
+
+
+if not manually_select_projects:
+    if not show_welcome_survey:
+        try:
+            del jobs_of_interest[f'{cfg.welcome_survey_name}']
+        except:
+            f"{cfg.welcome_survey_name} not in selection so nothing to delete"
+    if not show_education_screener:
+        try:
+            del jobs_of_interest[f'{cfg.education_screener_name}']
+        except:
+            f"{cfg.education_screener_name} not in selection so nothing to delete"
+    if not show_member_survey:
+        try:
+            del jobs_of_interest[f'{cfg.member_experience_survey_name}']
+        except:
+            f"{cfg.member_experience_survey_name} not in selection so nothing to delete"
+
+
 
 for k in jobs_of_interest.keys():
     print(f"Running through loop for jobs_of_interest['{k}']")
