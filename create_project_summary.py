@@ -12,8 +12,8 @@ cfg = Config()
 # TODO: when run normally, pop up GUI to choose 'all live projects', or to be able to input names of certain one/s
 # section - KEY SWITCH IS HERE - a crude temporary way of saying whether we want to just run this using the jobs
 #  listed in short_dict below
-manually_select_projects = True  # toggle
-# manually_select_projects = False  # toggle
+# manually_select_projects = True  # toggle
+manually_select_projects = False  # toggle
 
 
 # section: scrapes the latest survey admin table
@@ -232,7 +232,10 @@ for k in jobs_of_interest.keys():
     pyautogui.keyUp('alt')  # hold down the ctrl key
 
 
+# TODO: pop up dialog box once script finished
+
 # TODO: figure out how to fully automatically refresh - it seems to be doing it for the second project in the
 #  test loop but not the first; Yet to try with a longer list e.g. all live jobs
 
 # TODO: then merge all 'dashboard/RT' tabs into one xls (noting that I won't be able to refresh after that)
+
