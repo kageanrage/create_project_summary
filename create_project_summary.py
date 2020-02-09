@@ -4,7 +4,7 @@ import bs4, os, subprocess, datetime, shutil, time
 import pandas as pd
 from pprint import pprint
 import pyautogui
-
+import gui
 
 cfg = Config()
 
@@ -12,8 +12,13 @@ cfg = Config()
 # TODO: when run normally, pop up GUI to choose 'all live projects', or to be able to input names of certain one/s
 # section - KEY SWITCH IS HERE - a crude temporary way of saying whether we want to just run this using the jobs
 #  listed in short_dict below
-# manually_select_projects = True  # toggle
-manually_select_projects = False  # toggle
+
+all_live_jobs, surveys_to_exclude, manual_inclusions = gui.get_inputs_via_gui()
+
+if all_live_jobs:
+    manually_select_projects = False
+else:
+    manually_select_projects = True
 
 
 # section: scrapes the latest survey admin table
@@ -145,39 +150,21 @@ se_general.create_dir_if_not_exists(f"{root_dir}\\{date_dir_name}")
 # section: create short one-or-more job dict for manual operation (as opposed to all live jobs)
 if manually_select_projects:
     short_dict = {}
-    short_dict[cfg.manual_test_survey_name] = all_jobs[cfg.manual_test_survey_name]
-    short_dict[cfg.manual_test_survey_name_2] = all_jobs[cfg.manual_test_survey_name_2]
+    for i in range(0, len(manual_inclusions)):
+        short_dict[manual_inclusions[i]] = all_jobs[manual_inclusions[i]]
+
+    print('short_dict looks like this')
     pprint(short_dict)
     jobs_of_interest = short_dict
 else:
     jobs_of_interest = live_jobs
-
-
-# section: if show_welcome_survey = False, remove welcome survey from live_jobs before running main loop.
-#  Same for Education and Member FB surveys
-
-show_welcome_survey = False
-show_education_screener = False
-show_member_survey = False
-
-
-if not manually_select_projects:
-    if not show_welcome_survey:
-        try:
-            del jobs_of_interest[f'{cfg.welcome_survey_name}']
-        except:
-            f"{cfg.welcome_survey_name} not in selection so nothing to delete"
-    if not show_education_screener:
-        try:
-            del jobs_of_interest[f'{cfg.education_screener_name}']
-        except:
-            f"{cfg.education_screener_name} not in selection so nothing to delete"
-    if not show_member_survey:
-        try:
-            del jobs_of_interest[f'{cfg.member_experience_survey_name}']
-        except:
-            f"{cfg.member_experience_survey_name} not in selection so nothing to delete"
-
+    # section: if show_welcome_survey = False, remove welcome survey from live_jobs before running main loop.
+    #  Same for Education and Member FB surveys
+    potential_exclusions = ['Welcome', 'Education', 'Member']
+    for potential_exclusion in potential_exclusions:
+        if potential_exclusion in surveys_to_exclude and jobs_of_interest[f'{potential_exclusion}'] != False:
+            del jobs_of_interest[f'{potential_exclusion}']
+            f"Deleting {potential_exclusion} from jobs_of_interest"
 
 
 for k in jobs_of_interest.keys():
@@ -233,6 +220,7 @@ for k in jobs_of_interest.keys():
 
 
 # TODO: pop up dialog box once script finished
+gui.popup_finished_message()
 
 # TODO: figure out how to fully automatically refresh - it seems to be doing it for the second project in the
 #  test loop but not the first; Yet to try with a longer list e.g. all live jobs
