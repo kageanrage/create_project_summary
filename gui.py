@@ -25,6 +25,11 @@ def get_inputs_via_gui():
     include_all_live_jobs = values['include_all_live_jobs']
     print(f'include_all_live_jobs = {include_all_live_jobs}')
 
+    if include_all_live_jobs:
+        manually_select_projects = False
+    else:
+        manually_select_projects = True
+
     print(f"values['welcome_survey'] = {values['welcome_survey']}")
     print(f"values['education_survey'] = {values['education_survey']}")
     print(f"values['member_survey'] = {values['member_survey']}")
@@ -55,7 +60,7 @@ def get_inputs_via_gui():
     print(manual_inclusions)
 
     window.close()
-    return include_all_live_jobs, surveys_to_exclude, manual_inclusions
+    return manually_select_projects, surveys_to_exclude, manual_inclusions
 
 
 def popup_finished_message():
