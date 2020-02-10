@@ -5,9 +5,9 @@ def get_inputs_via_gui():
     layout = [
         [sg.Checkbox('All live projects', default=True, key="include_all_live_jobs")],
         [sg.Text('Surveys to exclude', size=(20, 1), justification='center', font=("Helvetica", 15))],
-        [sg.Checkbox('Welcome survey', size=(10, 1), default=True, key="welcome_survey"),
-         sg.Checkbox('Education survey', default=True, key="education_survey")],
-        [sg.Checkbox('Member sat survey', default=True, key="member_survey")],
+        [sg.Checkbox('Welcome survey', size=(10, 1), default=True, key="Welcome Survey"),
+         sg.Checkbox('Education survey', default=True, key="Education Screener")],
+        [sg.Checkbox('Member sat survey', default=True, key="Member Experience Survey")],
 
         [sg.Text('Manual inclusions', size=(30, 1), justification='center', font=("Helvetica", 15))],
         [sg.Text('Survey 1', size=(25, 1)), sg.InputText('', key="survey_1")],
@@ -30,9 +30,9 @@ def get_inputs_via_gui():
     else:
         manually_select_projects = True
 
-    print(f"values['welcome_survey'] = {values['welcome_survey']}")
-    print(f"values['education_survey'] = {values['education_survey']}")
-    print(f"values['member_survey'] = {values['member_survey']}")
+    print(f"values['Welcome Survey'] = {values['Welcome Survey']}")
+    print(f"values['Education Screener'] = {values['Education Screener']}")
+    print(f"values['Member Experience Survey'] = {values['Member Experience Survey']}")
 
 
     # manual_survey_1 = values['survey_1']
@@ -42,7 +42,7 @@ def get_inputs_via_gui():
 
     # section: this will look at the exclusion checkboxes and create a list
     surveys_to_exclude = []
-    potential_exclusions = ['welcome_survey', 'education_survey', 'member_survey']
+    potential_exclusions = ['Welcome Survey', 'Education Screener', 'Member Experience Survey']
     for potential_exclusion in potential_exclusions:
         if values[f'{potential_exclusion}']:
             surveys_to_exclude.append(f'{potential_exclusion}')

@@ -10,9 +10,15 @@ cfg = Config()
 
 # determine if running in auto mode (via BAT file) or not (using GUI for manual inputs)
 if len(sys.argv) > 1:
+    print('running via script in auto mode - ')
     manually_select_projects = False
-    surveys_to_exclude = ['welcome_survey', 'education_survey', 'member_survey']
+    print(f'manually_select_projects = {manually_select_projects}')
+    surveys_to_exclude = ['Welcome Survey', 'Education Screener', 'Member Experience Survey']
+    print('surveys_to_exclude = ')
+    print(surveys_to_exclude)
     manual_inclusions = []
+    print('manual_inclusions:')
+    print(manual_inclusions)
 else:
     manually_select_projects, surveys_to_exclude, manual_inclusions = gui.get_inputs_via_gui()
 
@@ -121,11 +127,14 @@ else:
     jobs_of_interest = live_jobs
     # if show_welcome_survey = False, remove welcome survey from live_jobs before running main loop.
     #  Same for Education and Member FB surveys
-    potential_exclusions = ['Welcome', 'Education', 'Member']
+    potential_exclusions = ['Welcome Survey', 'Education Screener', 'Member Experience Survey']
     for potential_exclusion in potential_exclusions:
         if potential_exclusion in surveys_to_exclude and jobs_of_interest[f'{potential_exclusion}'] != False:
             del jobs_of_interest[f'{potential_exclusion}']
             f"Deleting {potential_exclusion} from jobs_of_interest"
+
+print('Commencing loop for jobs_of_interest, which looks like this:')
+pprint(jobs_of_interest)
 
 for k in jobs_of_interest.keys():
     print(f"Running through loop for jobs_of_interest['{k}']")
