@@ -163,7 +163,7 @@ for k in jobs_of_interest.keys():
 
 # iterate through downloads dir contents to find the downloaded results csv for each job
     time.sleep(2)
-    most_recent_csv = se_general.identify_cur_res_csv(p_number, cfg.downloads_dir)
+    most_recent_csv = se_general.loop_verifying_most_recent_csv(p_number, cfg.downloads_dir)
     print('most recent csv is:')
     print(most_recent_csv)
     most_recent_csv_full = f"{cfg.downloads_dir}\\{most_recent_csv}"
