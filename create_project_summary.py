@@ -194,6 +194,10 @@ gui.popup_finished_message()
 # TODO: figure out how to fully automatically refresh - it seems to be doing it for the second project in the
 #  test loop but not the first, and unsure if it's refreshing the last tab
 
+# TODO: maybe close all the xls files and re-open them to force the refresh
+
 # TODO: then merge all 'dashboard/RT' tabs into one xls (noting that I won't be able to refresh after that)
 
-# TODO: add client name to xls template
+# TODO: add client name to xls template, noting that I'll need to insert it from script data as it's not in cur res file
+
+# TODO: add the use of Member Access Level in the hunt for bad data
