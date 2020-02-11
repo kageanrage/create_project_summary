@@ -10,7 +10,7 @@ cfg = Config()
 
 
 def add_client_name_to_xls():
-    wb = openpyxl.load_workbook(xls_final_filename_full)
+    wb = openpyxl.load_workbook(str(xls_final_filename_full))
     dash_sheet = wb['Dash']
     dash_sheet['B2'] = client_name
     wb.save(xls_final_filename_full)
@@ -189,7 +189,7 @@ for k in jobs_of_interest.keys():
     print(f'attempting to copy {cfg.xls_template_full} to {xls_final_filename_full}\\')
     shutil.copy(cfg.xls_template_full, xls_final_filename_full)
 
-    add_client_name_to_xls()
+    # add_client_name_to_xls()  # commented out as it corrupts the xlsx
 
 # open all files
 
@@ -207,4 +207,5 @@ gui.popup_finished_message()
 
 # TODO: then merge all 'dashboard/RT' tabs into one xls (noting that I won't be able to refresh after that)
 
-# TODO: add client name to xls template (Dash tab, cell B2)
+# TODO: add client name to xls template (Dash tab, cell B2) - NB when I try to populate, it corrupts xlsx
+# TODO: fix excel template so the dates of the outcomes per day chart update. At present even refreshing doesn't work - need to re-affirm groups to make it work
