@@ -1,12 +1,19 @@
 import se_admin, se_general
 from config import Config
-import bs4, os, subprocess, datetime, shutil, time, sys
+import bs4, os, subprocess, datetime, shutil, time, sys, openpyxl
 import pandas as pd
 from pprint import pprint
 import pyautogui
 import gui
 
 cfg = Config()
+
+
+def add_client_name_to_xls():
+    wb = openpyxl.load_workbook(xls_final_filename_full)
+    dash_sheet = wb['Dash']
+    dash_sheet['B2'] = client_name
+    wb.save(xls_final_filename_full)
 
 # determine if running in auto mode (via BAT file) or not (using GUI for manual inputs)
 if len(sys.argv) > 1:
@@ -182,6 +189,8 @@ for k in jobs_of_interest.keys():
     print(f'attempting to copy {cfg.xls_template_full} to {xls_final_filename_full}\\')
     shutil.copy(cfg.xls_template_full, xls_final_filename_full)
 
+    add_client_name_to_xls()
+
 # open all files
 
     subprocess.Popen(f'explorer "{xls_final_filename_full}"')
@@ -198,6 +207,4 @@ gui.popup_finished_message()
 
 # TODO: then merge all 'dashboard/RT' tabs into one xls (noting that I won't be able to refresh after that)
 
-# TODO: add client name to xls template, noting that I'll need to insert it from script data as it's not in cur res file
-
-# TODO: add the use of Member Access Level in the hunt for bad data
+# TODO: add client name to xls template (Dash tab, cell B2)
