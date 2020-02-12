@@ -207,5 +207,4 @@ gui.popup_finished_message()
 
 # TODO: then merge all 'dashboard/RT' tabs into one xls (noting that I won't be able to refresh after that)
 
-# TODO: add client name to xls template (Dash tab, cell B2) - NB when I try to populate, it corrupts xlsx
-# TODO: fix excel template so the dates of the outcomes per day chart update. At present even refreshing doesn't work - need to re-affirm groups to make it work
+# TODO: add client name to xls template (Dash tab, cell B2) - NB when I try to populate, it corrupts xlsx. Maybe I can try adding it to the CSV, to be pulled through by power query and then used in 'Dash'?
