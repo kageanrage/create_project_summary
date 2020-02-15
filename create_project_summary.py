@@ -217,9 +217,5 @@ for k in jobs_of_interest.keys():
 # pop up dialog box once script finished
 gui.popup_finished_message()
 
-# TODO: figure out how to fully automatically refresh - it seems to be doing it for the second project in the
-#  test loop but not the first, and unsure if it's refreshing the last tab
-
-# TODO: maybe close all the xls files and re-open them to force the refresh
 
 # TODO: then merge all 'dashboard/RT' tabs into one xls (noting that I won't be able to refresh after that)
