@@ -183,6 +183,11 @@ for k in jobs_of_interest.keys():
     desired_csv_name_full = f"{project_subdir_full}\\SurveyResults.csv"
     os.rename(moved_csv_full, desired_csv_name_full)
 
+# edit csv to add client_name
+    df = pd.read_csv(desired_csv_name_full)  # convert csv to df
+    df['client_name'] = client_name  # add col to df where title = 'client_name' and every cell says the client name
+    df.to_csv(desired_csv_name_full, index=None)  # overwrite the csv file with the version with the new column
+
 # clone and rename xlsx files from template
     fname_template = f'Summary {p_number} {se_general.get_shortened_str(survey_name, 10)}.xlsx'
     xls_final_filename_full = f"{project_dir_full}\\{fname_template}"
