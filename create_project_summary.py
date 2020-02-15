@@ -5,6 +5,8 @@ import pandas as pd
 from pprint import pprint
 import pyautogui
 import gui
+import win32com.client as win32
+
 
 cfg = Config()
 
@@ -26,8 +28,10 @@ if len(sys.argv) > 1:
     manual_inclusions = []
     print('manual_inclusions:')
     print(manual_inclusions)
+    close_excel = True
+    print(f'close_excel = {close_excel}')
 else:
-    manually_select_projects, surveys_to_exclude, manual_inclusions = gui.get_inputs_via_gui()
+    manually_select_projects, close_excel, surveys_to_exclude, manual_inclusions = gui.get_inputs_via_gui()
 
 # scrape the latest survey admin table
 driver, wait = se_general.init_selenium()
@@ -50,7 +54,7 @@ live_sa_jobs_df = all_sa_jobs_df[all_sa_jobs_df.Published == True]
 
 # TODO: NB there is a LOT of duplicate code ahead, doing the same stuff for live_jobs as for all_jobs.
 #  Re-write, perhaps building 'Live?' variable into all_jobs and then trimming it for use if/when needed
-# section: convert live_jobs_df to a dict of per-project dicts
+# convert live_jobs_df to a dict of per-project dicts
 live_sa_jobs_list = live_sa_jobs_df.values.tolist()
 
 live_jobs = {}
@@ -143,6 +147,8 @@ else:
 print('Commencing loop for jobs_of_interest, which looks like this:')
 pprint(jobs_of_interest)
 
+excel = win32.gencache.EnsureDispatch('Excel.Application')  # this is necessary to later close excel
+
 for k in jobs_of_interest.keys():
     print(f"Running through loop for jobs_of_interest['{k}']")
 
@@ -198,9 +204,15 @@ for k in jobs_of_interest.keys():
 
 # open all files
 
-    subprocess.Popen(f'explorer "{xls_final_filename_full}"')
-    time.sleep(10)
+    p = subprocess.Popen(f'explorer "{xls_final_filename_full}"')
+    time.sleep(20)
     se_general.excel_refresh_all()  # another refresh attempt
+    # time.sleep(5)
+    # if close_excel:
+        # excel.Visible = True
+        # print('attempting to quit excel')
+        # excel.Application.Quit()
+        # TODO: figure out how to get this to work
 
 # pop up dialog box once script finished
 gui.popup_finished_message()
@@ -211,5 +223,3 @@ gui.popup_finished_message()
 # TODO: maybe close all the xls files and re-open them to force the refresh
 
 # TODO: then merge all 'dashboard/RT' tabs into one xls (noting that I won't be able to refresh after that)
-
-# TODO: add client name to xls template (Dash tab, cell B2) - NB when I try to populate, it corrupts xlsx. Maybe I can try adding it to the CSV, to be pulled through by power query and then used in 'Dash'?
