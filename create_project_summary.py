@@ -52,8 +52,6 @@ live_sa_jobs_df = all_sa_jobs_df[all_sa_jobs_df.Published == True]
 # OPTIONAL - export df to excel
 # live_jobs_df.to_excel('export.xlsx')
 
-# TODO: NB there is a LOT of duplicate code ahead, doing the same stuff for live_jobs as for all_jobs.
-#  Re-write, perhaps building 'Live?' variable into all_jobs and then trimming it for use if/when needed
 # convert live_jobs_df to a dict of per-project dicts
 live_sa_jobs_list = live_sa_jobs_df.values.tolist()
 
@@ -112,7 +110,7 @@ for k in all_jobs.keys():
         all_jobs[k].setdefault('survey_id', all_jobs_ids_and_names[k]['survey_id'])
     except KeyError:
         print(f"all_jobs_ids_and_names['{k}'] not found")
-        # TODO: establish why many are not found, then decide if I can accept this. To do with bogus chars like '&'?
+        # optional to do: establish why many are not found, then decide if I can accept this. To do with bogus chars like '&'?
         # exit()
 
 print(f'\n\nall_jobs is of length {len(all_jobs)} and looks like this:')
@@ -216,6 +214,3 @@ for k in jobs_of_interest.keys():
 
 # pop up dialog box once script finished
 gui.popup_finished_message()
-
-
-# TODO: then merge all 'dashboard/RT' tabs into one xls (noting that I won't be able to refresh after that)
