@@ -34,87 +34,10 @@ else:
     manually_select_projects, close_excel, surveys_to_exclude, manual_inclusions = gui.get_inputs_via_gui()
 
 # scrape the latest survey admin table
+
 driver, wait = se_general.init_selenium()
+live_jobs, all_jobs = se_admin.grab_sa_projects_dicts(driver)
 
-se_admin.login_sa(driver, cfg.survey_admin_URL)
-
-soup = se_general.grab_new_soup(driver)
-
-soup_filename = '20200128_soup.txt'
-se_general.export_soup(soup, soup_filename)
-
-dfs = pd.read_html(soup_filename)  # list of dataframes
-all_sa_jobs_df = dfs[0]  # the first df in the list
-
-# identify which jobs are currently live
-live_sa_jobs_df = all_sa_jobs_df[all_sa_jobs_df.Published == True]
-
-# OPTIONAL - export df to excel
-# live_jobs_df.to_excel('export.xlsx')
-
-# convert live_jobs_df to a dict of per-project dicts
-live_sa_jobs_list = live_sa_jobs_df.values.tolist()
-
-live_jobs = {}
-for i in range(0, len(live_sa_jobs_list)):
-    live_job = {}
-    live_job['survey_name'] = live_sa_jobs_list[i][0]
-    live_job['p_number'] = live_sa_jobs_list[i][2]
-    live_job['client_name'] = live_sa_jobs_list[i][3]
-    live_jobs[live_sa_jobs_list[i][0]] = live_job
-
-# in parallel, convert all_sa_jobs_df to a dict of per-project dicts
-all_sa_jobs_list = all_sa_jobs_df.values.tolist()
-
-all_jobs = {}
-for i in range(0, len(all_sa_jobs_list)):
-    job = {}
-    job['survey_name'] = all_sa_jobs_list[i][0]
-    job['p_number'] = all_sa_jobs_list[i][2]
-    job['client_name'] = all_sa_jobs_list[i][3]
-    all_jobs[all_sa_jobs_list[i][0]] = job
-
-# isolate the survey id for each of those, to determine download URL.
-# First, use a simplified version of the regex from admin_scrape.py to grab survey_id and survey_name
-with open(soup_filename) as f:
-    canned_soup = bs4.BeautifulSoup(f, "html.parser")
-
-canned_soup_string = str(canned_soup)
-mo = cfg.brief_regex.findall(canned_soup_string)
-# print(mo[0])
-
-# convert all_projects mo into a dict with p_numbers as keys
-all_jobs_ids_and_names = {}
-for i in range(0, len(mo)):
-    per_project_dict = {}
-    per_project_dict['survey_id'] = mo[i][0]
-    per_project_dict['survey_name'] = mo[i][1]
-    all_jobs_ids_and_names[mo[i][1]] = per_project_dict
-
-# print('All projects dict:')
-# pprint(all_projects)
-
-# add survey_id to dict of dicts (Live jobs only)
-for k in live_jobs.keys():
-    try:
-        live_jobs[k].setdefault('survey_id', all_jobs_ids_and_names[k]['survey_id'])
-    except KeyError:
-        print(f"all_projects['{k}'] not found")
-        exit()
-print(f'\n\nlive_jobs is of length {len(live_jobs)} and looks like this:')
-pprint(live_jobs)
-
-# IN PARALLEL - add survey_id to dict of dicts (all jobs)
-for k in all_jobs.keys():
-    try:
-        all_jobs[k].setdefault('survey_id', all_jobs_ids_and_names[k]['survey_id'])
-    except KeyError:
-        print(f"all_jobs_ids_and_names['{k}'] not found")
-        # optional to do: establish why many are not found, then decide if I can accept this. To do with bogus chars like '&'?
-        # exit()
-
-print(f'\n\nall_jobs is of length {len(all_jobs)} and looks like this:')
-pprint(all_jobs)
 
 # create dir for todays date
 root_dir = cfg.project_updates_root_dir
