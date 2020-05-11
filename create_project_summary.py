@@ -28,10 +28,10 @@ if len(sys.argv) > 1:
     manual_inclusions = []
     print('manual_inclusions:')
     print(manual_inclusions)
-    close_excel = True
-    print(f'close_excel = {close_excel}')
+    # close_excel = True  # turned off 11-05-20 as feature doesnt work
+    # print(f'close_excel = {close_excel}')  # turned off 11-05-20 as feature doesnt work
 else:
-    manually_select_projects, close_excel, surveys_to_exclude, manual_inclusions = gui.get_inputs_via_gui()
+    manually_select_projects, surveys_to_exclude, manual_inclusions = gui.get_inputs_via_gui()
 
 # scrape the latest survey admin table
 
@@ -68,7 +68,7 @@ else:
 print('Commencing loop for jobs_of_interest, which looks like this:')
 pprint(jobs_of_interest)
 
-excel = win32.gencache.EnsureDispatch('Excel.Application')  # this is necessary to later close excel
+# excel = win32.gencache.EnsureDispatch('Excel.Application')  # this is necessary to later close excel  # removed 11-05-20 as feature doesnt work
 
 for k in jobs_of_interest.keys():
     print(f"Running through loop for jobs_of_interest['{k}']")

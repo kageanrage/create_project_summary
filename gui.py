@@ -4,7 +4,6 @@ import PySimpleGUI as sg
 def get_inputs_via_gui():
     layout = [
         [sg.Checkbox('All live projects', default=True, key="include_all_live_jobs")],
-        [sg.Checkbox('Close excel after running', size=(10, 1), default=True, key="close_excel")],
         [sg.Text('Surveys to exclude', size=(20, 1), justification='center', font=("Helvetica", 15))],
         [sg.Checkbox('Welcome survey', size=(10, 1), default=True, key="Welcome Survey"),
          sg.Checkbox('Education survey', default=True, key="Education Screener")],
@@ -22,8 +21,6 @@ def get_inputs_via_gui():
     window = sg.Window('Create Project Summaries').Layout(layout)
 
     button, values = window.Read()
-
-    close_excel = values['close_excel']
 
     include_all_live_jobs = values['include_all_live_jobs']
 
@@ -64,7 +61,7 @@ def get_inputs_via_gui():
     print(manual_inclusions)
 
     window.close()
-    return manually_select_projects, close_excel, surveys_to_exclude, manual_inclusions
+    return manually_select_projects, surveys_to_exclude, manual_inclusions
 
 
 def popup_finished_message():
