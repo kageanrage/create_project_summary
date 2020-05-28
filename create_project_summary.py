@@ -35,7 +35,7 @@ else:
 
 # scrape the latest survey admin table
 
-driver, wait = se_general.init_selenium()
+driver = se_general.init_selenium()
 live_jobs, all_jobs = se_admin.grab_sa_projects_dicts(driver)
 
 
