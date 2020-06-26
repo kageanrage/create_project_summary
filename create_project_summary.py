@@ -135,5 +135,7 @@ for k in jobs_of_interest.keys():
         # excel.Application.Quit()
         # TODO: figure out how to get this to work
 
+driver.quit()  # close browser
+
 # pop up dialog box once script finished
 gui.popup_finished_message()
