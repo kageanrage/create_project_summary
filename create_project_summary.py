@@ -90,7 +90,7 @@ for k in jobs_of_interest.keys():
 
     # Download current results for each project
     dl_link = f"{cfg.current_results_dl_url_prefix}{survey_id}"
-    print(dl_link)
+    print(f'\nNow downloading SurveyResults for {dl_link}')
     driver.get(dl_link)  # commented out during test mode
 
     se_general.excel_refresh_all()  # paradoxically placed before opening xls but this should refresh the previous one as late as possible
