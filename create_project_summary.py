@@ -31,7 +31,12 @@ if len(sys.argv) > 1:
     # close_excel = True  # turned off 11-05-20 as feature doesnt work
     # print(f'close_excel = {close_excel}')  # turned off 11-05-20 as feature doesnt work
 else:
-    manually_select_projects, surveys_to_exclude, manual_inclusions = gui.get_inputs_via_gui()
+    manually_select_projects, surveys_to_exclude, manual_inclusions, complex_report = gui.get_inputs_via_gui()
+
+
+# TODO: create two different paths - including and excluding RR data, using the different templates.
+# TODO: For Including RR - use fn in se_general to collate and grab SG IDs
+
 
 # scrape the latest survey admin table
 
@@ -119,8 +124,17 @@ for k in jobs_of_interest.keys():
 # clone and rename xlsx files from template
     fname_template = f'Summary {p_number} {se_general.get_shortened_str(survey_name, 10)}.xlsx'
     xls_final_filename_full = f"{project_dir_full}\\{fname_template}"
-    print(f'attempting to copy {cfg.xls_template_full} to {xls_final_filename_full}\\')
-    shutil.copy(cfg.xls_template_full, xls_final_filename_full)
+
+    if not complex_report:
+        print(f'attempting to copy {cfg.xls_template_simple_full} to {xls_final_filename_full}\\')
+        shutil.copy(cfg.xls_template_simple_full, xls_final_filename_full)
+    else:
+        print(f'attempting to copy {cfg.xls_template_complex_full} to {xls_final_filename_full}\\')
+        shutil.copy(cfg.xls_template_complex_full, xls_final_filename_full)
+        proj_dir = cfg.proj_dir_template.replace("p_number", p_number).replace("client_name", client_name).replace(
+            "survey_name", survey_name)
+        se_general.collate_project_sg_ids(proj_dir)
+        shutil.copy(proj_dir + "\\sends\\all_sg_ids.csv", project_dir_full + "\\SP_files\\IDs_invited_members.csv")
 
     # add_client_name_to_xls()  # commented out as it corrupts the xlsx
 
