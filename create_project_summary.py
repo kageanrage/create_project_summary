@@ -6,6 +6,7 @@ from pprint import pprint
 import pyautogui
 import gui
 import win32com.client as win32
+import pygetwindow as gw
 
 
 cfg = Config()
@@ -22,7 +23,7 @@ if len(sys.argv) > 1:
     print('running via script in auto mode - ')
     manually_select_projects = False
     print(f'manually_select_projects = {manually_select_projects}')
-    surveys_to_exclude = ['Welcome Survey', 'Education Screener', 'Member Experience Survey']
+    surveys_to_exclude = ['Welcome Survey', 'IrisRecruitApr22']
     print('surveys_to_exclude = ')
     print(surveys_to_exclude)
     manual_inclusions = []
@@ -64,8 +65,8 @@ if manually_select_projects:
 else:
     jobs_of_interest = live_jobs
     # if show_welcome_survey = False, remove welcome survey from live_jobs before running main loop.
-    #  Same for Education and Member FB surveys
-    potential_exclusions = ['Welcome Survey', 'Education Screener', 'Member Experience Survey']
+    #  Same for 'Iris Recruit'
+    potential_exclusions = ['Welcome Survey', 'Iris Recruit Apr-22']
     for potential_exclusion in potential_exclusions:
         if potential_exclusion in surveys_to_exclude and jobs_of_interest[f'{potential_exclusion}'] != False:
             del jobs_of_interest[f'{potential_exclusion}']

@@ -8,8 +8,7 @@ def get_inputs_via_gui():
         [sg.Checkbox('All live projects', default=False, key="include_all_live_jobs")],
         [sg.Text('Surveys to exclude', size=(20, 1), justification='center', font=("Helvetica", 15))],
         [sg.Checkbox('Welcome survey', size=(10, 1), default=True, key="Welcome Survey"),
-         sg.Checkbox('Education survey', default=True, key="Education Screener")],
-        [sg.Checkbox('Member sat survey', default=True, key="Member Experience Survey")],
+         sg.Checkbox('Iris Recruit Apr-22', default=True, key="Iris Recruit Apr-22")],
 
         [sg.Text('Manual inclusions', size=(30, 1), justification='center', font=("Helvetica", 15))],
         [sg.Text('Survey 1', size=(25, 1)), sg.InputText('', key="survey_1")],
@@ -39,8 +38,7 @@ def get_inputs_via_gui():
         complex_report = False
 
     print(f"values['Welcome Survey'] = {values['Welcome Survey']}")
-    print(f"values['Education Screener'] = {values['Education Screener']}")
-    print(f"values['Member Experience Survey'] = {values['Member Experience Survey']}")
+    print(f"values['Iris Recruit Apr-22'] = {values['Iris Recruit Apr-22']}")
     print(f"values['simple'] = {values['simple']}")
     print(f"values['complex'] = {values['complex']}")
 
@@ -52,7 +50,7 @@ def get_inputs_via_gui():
 
     # section: this will look at the exclusion checkboxes and create a list
     surveys_to_exclude = []
-    potential_exclusions = ['Welcome Survey', 'Education Screener', 'Member Experience Survey']
+    potential_exclusions = ['Welcome Survey', 'Iris Recruit Apr-22']
     for potential_exclusion in potential_exclusions:
         if values[f'{potential_exclusion}']:
             surveys_to_exclude.append(f'{potential_exclusion}')
