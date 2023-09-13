@@ -120,6 +120,12 @@ for k in jobs_of_interest.keys():
 # edit csv to add client_name
     df = pd.read_csv(desired_csv_name_full)  # convert csv to df
     df['client_name'] = client_name  # add col to df where title = 'client_name' and every cell says the client name
+    print('12-09-23 This is where we are intermittently having crash issues')
+    print('desired_csv_name_full =')
+    print(desired_csv_name_full)
+    print('Waiting for 3 sec in case that makes a difference')
+    time.sleep(3)
+    print('Now attempting to run to_csv function on the above path')
     df.to_csv(desired_csv_name_full, index=None)  # overwrite the csv file with the version with the new column
 
 # clone and rename xlsx files from template
