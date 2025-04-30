@@ -23,6 +23,11 @@ def get_inputs_via_gui():
 
     button, values = window.Read()
 
+    # Handle cancellation - Check for None, sg.Cancel object, sg.WIN_CLOSED, or the string 'Cancel'
+    if button == sg.Cancel or button is None or button == sg.WIN_CLOSED or button == 'Cancel':
+        window.close()
+        return None # Indicate cancellation to the caller
+
     include_all_live_jobs = values['include_all_live_jobs']
 
     print(f'include_all_live_jobs = {include_all_live_jobs}')

@@ -32,7 +32,12 @@ if len(sys.argv) > 1:
     # close_excel = True  # turned off 11-05-20 as feature doesnt work
     # print(f'close_excel = {close_excel}')  # turned off 11-05-20 as feature doesnt work
 else:
-    manually_select_projects, surveys_to_exclude, manual_inclusions, complex_report = gui.get_inputs_via_gui()
+    gui_results = gui.get_inputs_via_gui()
+    # if gui_results is None or gui_results[0] is None: # Check if GUI was cancelled
+    if gui_results is None: # Check if GUI returned None (cancelled)
+        print("User cancelled the operation from the GUI. Exiting script.")
+        sys.exit(0)
+    manually_select_projects, surveys_to_exclude, manual_inclusions, complex_report = gui_results
 
 
 # TODO: create two different paths - including and excluding RR data, using the different templates.
