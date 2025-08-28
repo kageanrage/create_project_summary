@@ -152,7 +152,17 @@ for k in jobs_of_interest.keys():
 
 # open all files
 
-    p = subprocess.Popen(f'explorer "{xls_final_filename_full}"')
+    # Use os.startfile instead of explorer - more reliable for opening files
+    import os
+    try:
+        os.startfile(xls_final_filename_full)
+        print(f"Opened Excel file: {xls_final_filename_full}")
+    except Exception as e:
+        print(f"Failed to open with os.startfile: {e}")
+        # Fallback to original method
+        p = subprocess.Popen(f'explorer "{xls_final_filename_full}"')
+        print("Fell back to explorer method")
+    
     time.sleep(20)
     se_general.excel_refresh_all()  # another refresh attempt
     # time.sleep(5)
