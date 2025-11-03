@@ -3,9 +3,7 @@ import PySimpleGUI as sg
 
 def get_inputs_via_gui():
     layout = [
-        [sg.Radio('Simple Report (no RR data)', "simple_or_complex", key='simple',  default=True, size=(10, 1)),
-         sg.Radio('Complex Report (RR data)', "simple_or_complex", key='complex')],
-        [sg.Checkbox('All live projects', default=False, key="include_all_live_jobs")],
+        [sg.Checkbox('All live projects', default=True, key="include_all_live_jobs")],
         [sg.Text('Surveys to exclude', size=(20, 1), justification='center', font=("Helvetica", 15))],
         [sg.Checkbox('Welcome survey', size=(10, 1), default=True, key="Welcome Survey"),
          sg.Checkbox('Iris Recruit Apr-22', default=True, key="Iris Recruit Apr-22")],
@@ -37,15 +35,8 @@ def get_inputs_via_gui():
     else:
         manually_select_projects = True
 
-    if values['complex']:
-        complex_report = True
-    else:
-        complex_report = False
-
     print(f"values['Welcome Survey'] = {values['Welcome Survey']}")
     print(f"values['Iris Recruit Apr-22'] = {values['Iris Recruit Apr-22']}")
-    print(f"values['simple'] = {values['simple']}")
-    print(f"values['complex'] = {values['complex']}")
 
 
     # manual_survey_1 = values['survey_1']
@@ -73,7 +64,7 @@ def get_inputs_via_gui():
     print(manual_inclusions)
 
     window.close()
-    return manually_select_projects, surveys_to_exclude, manual_inclusions, complex_report
+    return manually_select_projects, surveys_to_exclude, manual_inclusions
 
 
 def popup_finished_message():
