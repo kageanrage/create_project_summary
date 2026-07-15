@@ -113,8 +113,8 @@ else:
     # Remove excluded surveys from live_jobs before running main loop
     potential_exclusions = ['Welcome Survey', 'Iris Recruit Apr-22']
     for potential_exclusion in potential_exclusions:
-        if potential_exclusion in surveys_to_exclude and jobs_of_interest[f'{potential_exclusion}'] != False:
-            del jobs_of_interest[f'{potential_exclusion}']
+        if potential_exclusion in surveys_to_exclude and potential_exclusion in jobs_of_interest:
+            del jobs_of_interest[potential_exclusion]
             print(f"Deleting {potential_exclusion} from jobs_of_interest")
 
 print('Commencing loop for jobs_of_interest, which looks like this:')
